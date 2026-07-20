@@ -3,6 +3,7 @@ let books = [
         id: "1",
         title: "The Hobbit",
         author: "J.R.R. Tolkien",
+        year: 1937,
         category: "Fantasy",
         price: 45,
         isBorrowed: false,
@@ -13,6 +14,7 @@ let books = [
         id: "2",
         title: "Harry Potter",
         author: "J.K. Rowling",
+        year: 1997,
         category: "Fantasy",
         price: 50,
         isBorrowed: false,
@@ -34,16 +36,13 @@ const getBookById = (req, res) => {
 };
 
 const createBook = (req, res) => {
-    const { title, author, category, price } = req.body;
-
-    if (!title || !author || !category || !price) {
-        return res.status(400).json({ message: "נא למלא את כל שדות החובה" });
-    }
+    const { title, author, year, category, price } = req.body;
 
     const newBook = {
         id: (books.length + 1).toString(),
         title,
         author,
+        year,
         category,
         price,
         isBorrowed: false,
@@ -61,9 +60,10 @@ const updateBook = (req, res) => {
         return res.status(404).json({ message: "הספר לעדכון לא נמצא" });
     }
 
-    const { title, author, category, price } = req.body;
+    const { title, author, year, category, price } = req.body;
     if (title) book.title = title;
     if (author) book.author = author;
+    if (year) book.year = year;
     if (category) book.category = category;
     if (price) book.price = price;
 

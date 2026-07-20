@@ -11,8 +11,9 @@ const { requestLogger, timeRestrictor } = require('./middlewares/custom.middlewa
 const { notFound, errorHandler } = require('./middlewares/error.middleware');
 
 const app = express();
+
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 דקות
+    windowMs: 15 * 60 * 1000, 
     max: 100,
     message: { message: "יותר מדי בקשות מכתובת זו, נא לנסות שוב מאוחר יותר." }
 });
@@ -25,7 +26,7 @@ app.use(morgan('dev'));
 app.use(cookieParser()); 
 
 app.use(requestLogger);
-app.use(timeRestrictor);
+// app.use(timeRestrictor); 
 
 app.get('/', (req, res) => {
     res.send('שרת הספרייה באוויר ועובד מעולה!');
@@ -34,8 +35,7 @@ app.get('/', (req, res) => {
 app.use('/api', routes);
 
 app.use(notFound);   
-app.use(errorHandler);  
-
+app.use(errorHandler);   
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

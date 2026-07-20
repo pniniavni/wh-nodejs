@@ -1,5 +1,8 @@
 const Joi = require('joi');
 
+const currentYear = new Date().getFullYear();
+
+// 1. סכמה ליצירת ספר חדש
 const bookSchema = Joi.object({
     title: Joi.string().min(2).max(100).required().messages({
         'string.empty': 'שם הספר אינו יכול להיות ריק',
@@ -9,6 +12,13 @@ const bookSchema = Joi.object({
     author: Joi.string().min(2).max(50).required().messages({
         'string.empty': 'שם הסופר אינו יכול להיות ריק',
         'any.required': 'שם הסופר הוא שדה חובה'
+    }),
+year: Joi.number().integer().min(1450).max(new Date().getFullYear()).required().messages({
+        'number.base': 'שנת ההוצאה חייבת להיות מספר שלם',
+        'number.integer': 'שנת ההוצאה חייבת להיות מספר שלם',
+        'number.min': 'שנת ההוצאה חייבת להיות אחרי 1450',
+        'number.max': `שנת ההוצאה חייבת להיות עד ${currentYear}`,
+        'any.required': 'שנת ההוצאה היא שדה חובה'
     }),
     category: Joi.string().min(3).max(30).required().messages({
         'string.empty': 'קטגוריה אינה יכולה להיות ריקה',
@@ -21,6 +31,34 @@ const bookSchema = Joi.object({
     })
 });
 
+const updateBookSchema = Joi.object({
+    title: Joi.string().min(2).max(100).messages({
+        'string.empty': 'שם הספר אינו יכול להיות ריק',
+        'string.min': 'שם הספר חייב להכיל לפחות 2 תווים'
+    }),
+    author: Joi.string().min(2).max(50).messages({
+        'string.empty': 'שם הסופר אינו יכול להיות ריק',
+        'string.min': 'שם הסופר חייב להכיל לפחות 2 תווים'
+    }),
+    year: Joi.number().integer().min(1450).max(currentYear).messages({
+        'number.base': 'שנת ההוצאה חייבת להיות מספר שלם',
+        'number.integer': 'שנת ההוצאה חייבת להיות מספר שלם',
+        'number.min': 'שנת ההוצאה חייבת להיות אחרי 1450',
+        'number.max': `שנת ההוצאה חייבת להיות עד ${currentYear}`
+    }),
+    category: Joi.string().min(3).max(30).messages({
+        'string.empty': 'קטגוריה אינה יכולה להיות ריקה',
+        'string.min': 'הקטגוריה חייבת להכיל לפחות 3 תווים'
+    }),
+    price: Joi.number().positive().messages({
+        'number.base': 'המחיר חייב להיות מספר',
+        'number.positive': 'המחיר חייב להיות גדול מאפס'
+    })
+}).min(1).messages({
+    'object.min': 'יש לשלוח לפחות שדה אחד לעדכון הספר'
+});
+
+// 2. סכמה לרישום משתמש חדש
 const userRegisterSchema = Joi.object({
     username: Joi.string().alphanum().min(3).max(30).required().messages({
         'string.empty': 'שם המשתמש אינו יכול להיות ריק',
@@ -37,7 +75,21 @@ const userRegisterSchema = Joi.object({
     })
 });
 
+// 3. סכמה להתחברות משתמש (השלמה ל-3 סכמות סה"כ)
+const userLoginSchema = Joi.object({
+    email: Joi.string().email().required().messages({
+        'string.email': 'כתובת האימייל אינה תקינה',
+        'any.required': 'אימייל הוא שדה חובה'
+    }),
+    password: Joi.string().required().messages({
+        'string.empty': 'הסיסמה אינה יכולה להיות ריקה',
+        'any.required': 'הסיסמה היא שדה חובה'
+    })
+});
+
 module.exports = {
-    bookSchema,
-    userRegisterSchema
+  bookSchema,
+  updateBookSchema,
+  userRegisterSchema,
+  userLoginSchema
 };
