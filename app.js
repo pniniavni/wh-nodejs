@@ -23,3 +23,6 @@ app.use(requestLogger);
 app.use(timeRestrictor);
 
 app.use('/api', routes);
+const { notFound, errorHandler } = require('./middlewares/error.middleware');
+app.use(notFound);      
+app.use(errorHandler);
