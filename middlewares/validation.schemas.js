@@ -2,7 +2,6 @@ const Joi = require('joi');
 
 const currentYear = new Date().getFullYear();
 
-// 1. סכמה ליצירת ספר חדש
 const bookSchema = Joi.object({
     title: Joi.string().min(2).max(100).required().messages({
         'string.empty': 'שם הספר אינו יכול להיות ריק',
@@ -58,7 +57,6 @@ const updateBookSchema = Joi.object({
     'object.min': 'יש לשלוח לפחות שדה אחד לעדכון הספר'
 });
 
-// 2. סכמה לרישום משתמש חדש
 const userRegisterSchema = Joi.object({
     username: Joi.string().alphanum().min(3).max(30).required().messages({
         'string.empty': 'שם המשתמש אינו יכול להיות ריק',
@@ -75,7 +73,6 @@ const userRegisterSchema = Joi.object({
     })
 });
 
-// 3. סכמה להתחברות משתמש (השלמה ל-3 סכמות סה"כ)
 const userLoginSchema = Joi.object({
     email: Joi.string().email().required().messages({
         'string.email': 'כתובת האימייל אינה תקינה',
