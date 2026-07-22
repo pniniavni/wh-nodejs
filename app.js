@@ -11,12 +11,13 @@ const { requestLogger, timeRestrictor } = require('./middlewares/custom.middlewa
 const { notFound, errorHandler } = require('./middlewares/error.middleware');
 
 const app = express();
-
+connectDB();
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
     max: 100,
     message: { message: "יותר מדי בקשות מכתובת זו, נא לנסות שוב מאוחר יותר." }
 });
+const connectDB = require('./config/db');
 
 app.use(cors());
 app.use(helmet());
