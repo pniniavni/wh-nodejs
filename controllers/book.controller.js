@@ -20,6 +20,7 @@ exports.getBookById = async (req, res) => {
     res.status(500).json({ message: 'שגיאה בשליפת הספר', error: error.message });
   }
 };
+
 exports.createBook = async (req, res) => {
   try {
     const newBook = new Book(req.body);

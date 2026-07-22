@@ -8,19 +8,26 @@ const bookSchema = Joi.object({
         'string.min': 'שם הספר חייב להכיל לפחות 2 תווים',
         'any.required': 'שם הספר הוא שדה חובה'
     }),
-    author: Joi.string().min(2).max(50).required().messages({
-        'string.empty': 'שם הסופר אינו יכול להיות ריק',
-        'any.required': 'שם הסופר הוא שדה חובה'
+    author: Joi.object({
+        name: Joi.string().required().messages({
+            'string.empty': 'שם המחבר אינו יכול להיות ריק',
+            'any.required': 'שם המחבר הוא שדה חובה'
+        }),
+        phone: Joi.string().optional(),
+        email: Joi.string().email().optional()
+    }).required().messages({
+        'any.required': 'פרטי המחבר הם שדה חובה'
     }),
-year: Joi.number().integer().min(1450).max(new Date().getFullYear()).required().messages({
+    year: Joi.number().integer().min(1450).max(currentYear).required().messages({
         'number.base': 'שנת ההוצאה חייבת להיות מספר שלם',
         'number.integer': 'שנת ההוצאה חייבת להיות מספר שלם',
         'number.min': 'שנת ההוצאה חייבת להיות אחרי 1450',
         'number.max': `שנת ההוצאה חייבת להיות עד ${currentYear}`,
         'any.required': 'שנת ההוצאה היא שדה חובה'
     }),
-    category: Joi.string().min(3).max(30).required().messages({
+    category: Joi.string().valid('mth', 'programming', 'fiction', 'general').required().messages({
         'string.empty': 'קטגוריה אינה יכולה להיות ריקה',
+        'any.only': 'הקטגוריה חייבת להיות אחת מהאפשרויות המותרות',
         'any.required': 'קטגוריה היא שדה חובה'
     }),
     price: Joi.number().positive().required().messages({
@@ -35,19 +42,23 @@ const updateBookSchema = Joi.object({
         'string.empty': 'שם הספר אינו יכול להיות ריק',
         'string.min': 'שם הספר חייב להכיל לפחות 2 תווים'
     }),
-    author: Joi.string().min(2).max(50).messages({
-        'string.empty': 'שם הסופר אינו יכול להיות ריק',
-        'string.min': 'שם הסופר חייב להכיל לפחות 2 תווים'
-    }),
+    author: Joi.object({
+        name: Joi.string().min(2).max(50).messages({
+            'string.empty': 'שם הסופר אינו יכול להיות ריק',
+            'string.min': 'שם הסופר חייב להכיל לפחות 2 תווים'
+        }),
+        phone: Joi.string().optional(),
+        email: Joi.string().email().optional()
+    }).optional(),
     year: Joi.number().integer().min(1450).max(currentYear).messages({
         'number.base': 'שנת ההוצאה חייבת להיות מספר שלם',
         'number.integer': 'שנת ההוצאה חייבת להיות מספר שלם',
         'number.min': 'שנת ההוצאה חייבת להיות אחרי 1450',
         'number.max': `שנת ההוצאה חייבת להיות עד ${currentYear}`
     }),
-    category: Joi.string().min(3).max(30).messages({
+    category: Joi.string().valid('mth', 'programming', 'fiction', 'general').messages({
         'string.empty': 'קטגוריה אינה יכולה להיות ריקה',
-        'string.min': 'הקטגוריה חייבת להכיל לפחות 3 תווים'
+        'any.only': 'הקטגוריה חייבת להיות אחת מהאפשרויות המותרות'
     }),
     price: Joi.number().positive().messages({
         'number.base': 'המחיר חייב להיות מספר',
@@ -85,8 +96,8 @@ const userLoginSchema = Joi.object({
 });
 
 module.exports = {
-  bookSchema,
-  updateBookSchema,
-  userRegisterSchema,
-  userLoginSchema
+    bookSchema,
+    updateBookSchema,
+    userRegisterSchema,
+    userLoginSchema
 };
