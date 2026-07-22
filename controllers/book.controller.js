@@ -1,129 +1,59 @@
-let books = [
-    {
-        id: "1",
-        title: "The Hobbit",
-        author: "J.R.R. Tolkien",
-        year: 1937,
-        category: "Fantasy",
-        price: 45,
-        isBorrowed: false,
-        borrowerName: "",
-        borrowDate: ""
-    },
-    {
-        id: "2",
-        title: "Harry Potter",
-        author: "J.K. Rowling",
-        year: 1997,
-        category: "Fantasy",
-        price: 50,
-        isBorrowed: false,
-        borrowerName: "",
-        borrowDate: ""
-    }
-];
+const Book = require('../models/book.model');
 
-const getAllBooks = (req, res) => {
-    res.json(books);
+exports.getAllBooks = async (req, res) => {
+  try {
+    const books = await Book.find();
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה בשליפת הספרים', error: error.message });
+  }
 };
 
-const getBookById = (req, res) => {
-    const book = books.find(b => b.id === req.params.id);
+exports.getBookById = async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
     if (!book) {
-        return res.status(404).json({ message: "הספר לא נמצא" });
+      return res.status(404).json({ message: 'הספר לא נמצא' });
     }
-    res.json(book);
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה בשליפת הספר', error: error.message });
+  }
+};
+exports.createBook = async (req, res) => {
+  try {
+    const newBook = new Book(req.body);
+    const savedBook = await newBook.save();
+    res.status(201).json(savedBook);
+  } catch (error) {
+    res.status(400).json({ message: 'שגיאה ביצירת הספר', error: error.message });
+  }
 };
 
-const createBook = (req, res) => {
-    const { title, author, year, category, price } = req.body;
-
-    const newBook = {
-        id: (books.length + 1).toString(),
-        title,
-        author,
-        year,
-        category,
-        price,
-        isBorrowed: false,
-        borrowerName: "",
-        borrowDate: ""
-    };
-
-    books.push(newBook);
-    res.status(201).json({ message: "הספר נוסף בהצלחה!", book: newBook });
+exports.updateBook = async (req, res) => {
+  try {
+    const updatedBook = await Book.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedBook) {
+      return res.status(404).json({ message: 'הספר לא נמצא' });
+    }
+    res.status(200).json(updatedBook);
+  } catch (error) {
+    res.status(400).json({ message: 'שגיאה בעדכון הספר', error: error.message });
+  }
 };
 
-const updateBook = (req, res) => {
-    const book = books.find(b => b.id === req.params.id);
-    if (!book) {
-        return res.status(404).json({ message: "הספר לעדכון לא נמצא" });
+exports.deleteBook = async (req, res) => {
+  try {
+    const deletedBook = await Book.findByIdAndDelete(req.params.id);
+    if (!deletedBook) {
+      return res.status(404).json({ message: 'הספר לא נמצא' });
     }
-
-    const { title, author, year, category, price } = req.body;
-    if (title) book.title = title;
-    if (author) book.author = author;
-    if (year) book.year = year;
-    if (category) book.category = category;
-    if (price) book.price = price;
-
-    res.json({ message: "הספר עודכן בהצלחה", book });
-};
-
-const borrowBook = (req, res) => {
-    const book = books.find(b => b.id === req.params.id);
-    if (!book) {
-        return res.status(404).json({ message: "הספר לא נמצא" });
-    }
-
-    if (book.isBorrowed) {
-        return res.status(400).json({ message: "הספר כבר מושאל למישהו אחר" });
-    }
-
-    const { borrowerName } = req.body;
-    if (!borrowerName) {
-        return res.status(400).json({ message: "יש לציין את שם השואל" });
-    }
-
-    book.isBorrowed = true;
-    book.borrowerName = borrowerName;
-    book.borrowDate = new Date().toLocaleDateString();
-
-    res.json({ message: "הספר הושאל בהצלחה!", book });
-};
-
-const returnBook = (req, res) => {
-    const book = books.find(b => b.id === req.params.id);
-    if (!book) {
-        return res.status(404).json({ message: "הספר לא נמצא" });
-    }
-
-    if (!book.isBorrowed) {
-        return res.status(400).json({ message: "הספר הזה אינו מושאל כרגע" });
-    }
-
-    book.isBorrowed = false;
-    book.borrowerName = "";
-    book.borrowDate = "";
-
-    res.json({ message: "הספר הוחזר לספרייה בהצלחה!", book });
-};
-
-const deleteBook = (req, res) => {
-    const bookIndex = books.findIndex(b => b.id === req.params.id);
-    if (bookIndex === -1) {
-        return res.status(404).json({ message: "הספר למחיקה לא נמצא" });
-    }
-
-    const deleted = books.splice(bookIndex, 1);
-    res.json({ message: "הספר נמחק בהצלחה", book: deleted[0] });
-};
-module.exports = {
-    getAllBooks,
-    getBookById,
-    createBook,
-    updateBook,
-    borrowBook,
-    returnBook,
-    deleteBook
+    res.status(200).json({ message: 'הספר נמחק בהצלחה' });
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה במחיקת הספר', error: error.message });
+  }
 };
