@@ -7,6 +7,7 @@ const bookController = require('../controllers/book.controller');
 const schemas = require('../middlewares/validation.schemas');
 const bookSchema = schemas?.bookSchema || schemas?.default?.bookSchema;
 const updateBookSchema = schemas?.updateBookSchema || schemas?.default?.updateBookSchema;
+router.get('/category/:category', bookController.getBooksByCategory);
 router.get('/', bookController.getAllBooks);
 router.get('/:id', bookController.getBookById);
 router.post('/', validateRequest(bookSchema), bookController.createBook);

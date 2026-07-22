@@ -58,3 +58,18 @@ exports.deleteBook = async (req, res) => {
     res.status(500).json({ message: 'שגיאה במחיקת הספר', error: error.message });
   }
 };
+
+exports.getBooksByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const books = await Book.find({ category });
+    
+    if (!books || books.length === 0) {
+      return res.status(404).json({ message: 'לא נמצאו ספרים בקטגוריה זו' });
+    }
+    
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(500).json({ message: 'שגיאה בשליפת הספרים לפי קטגוריה', error: error.message });
+  }
+};

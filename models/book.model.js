@@ -3,19 +3,22 @@ const mongoose = require('mongoose');
 const bookSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, 'שם ספר הוא שדה חובה'],
-    minlength: [2, 'שם ספר חייב להכיל לפחות 2 תווים'],
-    maxlength: [20, 'שם ספר יכול להכיל עד 20 תווים'],
+    required: true,
     unique: true,
-    trim: true
+    minlength: 2,
+    maxlength: 100
+  },
+  category: {
+    type: String,
+    enum: ['mth', 'programming', 'fiction', 'general'], // התאמה מוחלטת ל-Joi
+    required: true
+  },
+  year: {
+    type: Number,
+    required: true
   },
   price: {
     type: Number,
-    required: [true, 'מחיר ספר הוא שדה חובה']
-  },
-  categories: {
-    type: [String],
-    enum: ['mth', 'programming', 'fiction', 'general'], // רשימת ערכים מורשים
     required: true
   },
   author: {
